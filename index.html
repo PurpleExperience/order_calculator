@@ -201,23 +201,62 @@
             gap: 15px;
         }
 
-        .checkbox-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            padding: 5px 10px;
-            border-radius: 8px;
-            transition: background 0.3s ease;
-        }
+		.checkbox-wrapper {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			cursor: pointer;
+			padding: 8px 12px;
+			border-radius: 8px;
+			transition: all 0.3s ease;
+			background: #f5f7fa;
+			border: 1px solid #e1e8ed;
+		}
 
-        .checkbox-wrapper:hover {
-            background: #f8f9fa;
-        }
+		.checkbox-wrapper:hover {
+			background: #e6f0ff;
+			border-color: #b3c6ff;
+			transform: translateY(-2px);
+			box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+		}
 
-        .checkbox-wrapper input[type="checkbox"] {
-            transform: scale(1.2);
-        }
+		.checkbox-wrapper input[type="checkbox"] {
+			-webkit-appearance: none;
+			appearance: none;
+			width: 20px;
+			height: 20px;
+			border: 2px solid #667eea;
+			border-radius: 4px;
+			outline: none;
+			cursor: pointer;
+			position: relative;
+			transition: all 0.2s ease;
+		}
+
+		.checkbox-wrapper input[type="checkbox"]:checked {
+			background-color: #667eea;
+			border-color: #667eea;
+		}
+
+		.checkbox-wrapper input[type="checkbox"]:checked::after {
+			content: "✓";
+			position: absolute;
+			color: white;
+			font-size: 14px;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+		}
+
+		.checkbox-wrapper input[type="checkbox"]:focus {
+			box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+		}
+		
+		.checkbox-wrapper.checked {
+			background: #e6f0ff;
+			border-color: #667eea;
+			font-weight: 500;
+		}
 
         .summary {
             margin-top: 40px;
@@ -300,7 +339,7 @@
         
         <div class="content">
             <div class="input-section">
-                <h2>📝 Вставьте текст заказа(ЯндексЕда)</h2>
+                <h2>📝 Вставьте текст заказа</h2>
                 <textarea id="orderText" placeholder="Вставьте сюда текст заказа, начинающийся с 'Состав заказа' и заканчивающийся 'Итого XXX ₽'..."></textarea>
                 <button class="parse-btn" onclick="parseOrder()">Обработать заказ</button>
                 <div id="error" class="error hidden"></div>
@@ -538,107 +577,120 @@
             updatePeopleDisplay();
         });
 
-        function updateItemsDisplay() {
-            if (people.length === 0 || orderData.items.length === 0) {
-                document.getElementById('itemsSection').classList.add('hidden');
-                document.getElementById('summary').classList.add('hidden');
-                return;
-            }
+		function updateItemsDisplay() {
+			if (people.length === 0 || orderData.items.length === 0) {
+				document.getElementById('itemsSection').classList.add('hidden');
+				document.getElementById('summary').classList.add('hidden');
+				return;
+			}
 
-            const container = document.getElementById('itemsList');
-            container.innerHTML = orderData.items.map(item => `
-                <div class="item-card">
-                    <div class="item-header">
-                        <div class="item-name">${item.name}</div>
-                        <div class="item-price">${formatPrice(item.price)} ₽</div>
-                    </div>
-                    <div class="person-checkboxes">
-                        ${people.map(person => `
-                            <label class="checkbox-wrapper">
-                                <input type="checkbox" onchange="updateSummary()" data-item-id="${item.id}" data-person="${person}">
-                                ${person}
-                            </label>
-                        `).join('')}
-                    </div>
-                </div>
-            `).join('');
+			const container = document.getElementById('itemsList');
+			container.innerHTML = orderData.items.map((item, index) => {
+				// Проверяем, есть ли уже выбранные чекбоксы для этого товара
+				const checkboxes = document.querySelectorAll(`input[data-item-index="${index}"]`);
+				let selectedPeople = [];
+				checkboxes.forEach(cb => {
+					if (cb.checked) selectedPeople.push(cb.dataset.person);
+				});
 
-            document.getElementById('itemsSection').classList.remove('hidden');
-            updateSummary();
-        }
+				return `
+					<div class="item-card">
+						<div class="item-header">
+							<div class="item-name">${item.name}</div>
+							<div class="item-price">${formatPrice(item.price)} ₽</div>
+						</div>
+						<div class="person-checkboxes">
+							${people.map(person => {
+								const isChecked = selectedPeople.includes(person);
+								return `
+									<label class="checkbox-wrapper ${isChecked ? 'checked' : ''}">
+										<input type="checkbox" onchange="updateSummary()" 
+											   data-item-index="${index}" 
+											   data-person="${person}"
+											   ${isChecked ? 'checked' : ''}>
+										${person}
+									</label>
+								`;
+							}).join('')}
+						</div>
+					</div>
+				`;
+			}).join('');
 
-        function updateSummary() {
-            if (people.length === 0) {
-                document.getElementById('summary').classList.add('hidden');
-                return;
-            }
+			document.getElementById('itemsSection').classList.remove('hidden');
+			updateSummary();
+		}
 
-            const summary = {};
-            people.forEach(person => {
-                summary[person] = {
-                    items: [],
-                    total: 0
-                };
-            });
+		function updateSummary() {
+			if (people.length === 0) {
+				document.getElementById('summary').classList.add('hidden');
+				return;
+			}
 
-            // Подсчитываем выбранные позиции
-            orderData.items.forEach(item => {
-                const checkboxes = document.querySelectorAll(`input[data-item-id="${item.id}"]`);
-                const selectedPeople = [];
-                
-                checkboxes.forEach(cb => {
-                    if (cb.checked) {
-                        selectedPeople.push(cb.dataset.person);
-                    }
-                });
+			const summary = {};
+			people.forEach(person => {
+				summary[person] = {
+					items: [],
+					total: 0
+				};
+			});
 
-                if (selectedPeople.length > 0) {
-                    const pricePerPerson = item.price / selectedPeople.length;
-                    selectedPeople.forEach(person => {
-                        summary[person].items.push({
-                            name: item.name,
-                            price: pricePerPerson,
-                            shared: selectedPeople.length > 1
-                        });
-                        summary[person].total += pricePerPerson;
-                    });
-                }
-            });
+			// Собираем все выбранные чекбоксы
+			const allCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+			
+			// Для каждого выбранного чекбокса добавляем соответствующий товар
+			allCheckboxes.forEach(checkbox => {
+				const person = checkbox.dataset.person;
+				const itemIndex = checkbox.dataset.itemIndex;
+				const item = orderData.items[itemIndex];
+				
+				if (item) {
+					// Добавляем товар с полной ценой
+					summary[person].items.push({
+						name: item.name,
+						price: item.price,
+						isShared: false
+					});
+					summary[person].total += item.price;
+				}
+			});
 
-            // Добавляем доставку и сборы, разделенные поровну
-            const additionalCosts = orderData.deliveryCost + orderData.serviceFee;
-            const costPerPerson = additionalCosts / people.length;
-            
-            people.forEach(person => {
-                summary[person].total += costPerPerson;
-                if (costPerPerson > 0) {
-                    summary[person].items.push({
-                        name: 'Доставка и сервисный сбор',
-                        price: costPerPerson,
-                        shared: true
-                    });
-                }
-            });
+			// Добавляем доставку и сборы, разделенные поровну
+			const additionalCosts = orderData.deliveryCost + orderData.serviceFee;
+			const costPerPerson = additionalCosts / people.length;
+			
+			people.forEach(person => {
+				if (summary[person].items.length > 0) { // Только если у человека есть заказы
+					summary[person].total += costPerPerson;
+					summary[person].items.push({
+						name: 'Доставка и сервисный сбор',
+						price: costPerPerson,
+						isShared: true
+					});
+				}
+			});
 
-            // Отображаем итоги
-            const summaryContent = document.getElementById('summaryContent');
-            summaryContent.innerHTML = people.map(person => {
-                const personSummary = summary[person];
-                return `
-                    <div class="person-summary">
-                        <div class="person-name">${person}</div>
-                        <div class="person-items">
-                            ${personSummary.items.map(item => `
-                                ${item.name}: ${formatPrice(item.price)} ₽${item.shared ? ' (разделено)' : ''}
-                            `).join('<br>')}
-                        </div>
-                        <div class="person-total">Итого: ${formatPrice(personSummary.total)} ₽</div>
-                    </div>
-                `;
-            }).join('');
+			// Отображаем итоги
+			const summaryContent = document.getElementById('summaryContent');
+			summaryContent.innerHTML = people.map(person => {
+				const personSummary = summary[person];
+				if (personSummary.items.length === 0) return ''; // Пропускаем людей без заказов
+				
+				return `
+					<div class="person-summary">
+						<div class="person-name">${person}</div>
+						<div class="person-items">
+							${personSummary.items.map(item => `
+								${item.name}: ${formatPrice(item.price)} ₽${item.isShared ? ' (разделено)' : ''}
+							`).join('<br>')}
+						</div>
+						<div class="person-total">Итого: ${formatPrice(personSummary.total)} ₽</div>
+					</div>
+				`;
+			}).join('');
 
-            document.getElementById('summary').classList.remove('hidden');
-        }
+			document.getElementById('summary').classList.remove('hidden');
+		}
     </script>
 </body>
 </html>

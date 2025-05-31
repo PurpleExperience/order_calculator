@@ -2,7 +2,7 @@
 
 **Автоматически разделяет счет между друзьями при заказе еды**
 
-[![Demo](https://img.shields.io/badge/demo-live-green?style=for-the-badge)](https://ваш-username.github.io)
+[![Demo](https://img.shields.io/badge/demo-live-green?style=for-the-badge)](https://purpleexperience.github.io/order_calculator/)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
 
 ## ✨ Основные возможности

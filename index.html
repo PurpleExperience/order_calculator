@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор разделения заказа</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: monospace;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .parse-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .parse-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .people-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .people-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .people-input input {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .add-person-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .add-person-btn:hover {
+            background: #218838;
+        }
+
+        .people-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .person-tag {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .remove-person {
+            background: rgba(255,255,255,0.3);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .items-section {
+            margin-top: 30px;
+        }
+
+        .item-card {
+            background: white;
+            border: 2px solid #e1e8ed;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: border-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .item-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .item-name {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1em;
+            flex: 1;
+        }
+
+        .item-price {
+            color: #28a745;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .person-checkboxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .checkbox-wrapper:hover {
+            background: #f8f9fa;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            transform: scale(1.2);
+        }
+
+        .summary {
+            margin-top: 40px;
+            padding: 25px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 15px;
+            color: white;
+        }
+
+        .summary h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.8em;
+        }
+
+        .person-summary {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .person-name {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .person-items {
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .person-total {
+            font-weight: bold;
+            font-size: 1.1em;
+            text-align: right;
+        }
+
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #f5c6cb;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .people-input {
+                flex-direction: column;
+            }
+            
+            .people-input input {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍕 Калькулятор разделения заказа</h1>
+            <p>Легко разделите счет между друзьями</p>
+        </div>
+        
+        <div class="content">
+            <div class="input-section">
+                <h2>📝 Вставьте текст заказа</h2>
+                <textarea id="orderText" placeholder="Вставьте сюда текст заказа, начинающийся с 'Состав заказа' и заканчивающийся 'Итого XXX ₽'..."></textarea>
+                <button class="parse-btn" onclick="parseOrder()">Обработать заказ</button>
+                <div id="error" class="error hidden"></div>
+            </div>
+
+            <div id="peopleSection" class="people-section">
+                <h2>👥 Участники</h2>
+                <div class="people-input">
+                    <input type="text" id="personName" placeholder="Введите имя участника..." onkeypress="handlePersonKeyPress(event)">
+                    <button class="add-person-btn" onclick="addPerson()">Добавить</button>
+                </div>
+                <div id="peopleList" class="people-list"></div>
+            </div>
+
+            <div id="itemsSection" class="items-section hidden">
+                <h2>🍔 Выберите, кто что заказал</h2>
+                <div id="itemsList"></div>
+            </div>
+
+            <div id="summary" class="summary hidden">
+                <h2>💰 Итоговый расчет</h2>
+                <div id="summaryContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let orderData = {
+            items: [],
+            deliveryCost: 0,
+            serviceFee: 0,
+            total: 0
+        };
+        let people = ['Егор', 'Дима', 'Саня'];
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.classList.remove('hidden');
+        }
+
+        function hideError() {
+            document.getElementById('error').classList.add('hidden');
+        }
+
+        function parsePrice(priceStr) {
+            // Убираем все лишние символы и оставляем только цифры и точку/запятую
+            const cleanStr = priceStr.replace(/[^\d.,]/g, '');
+            // Заменяем запятую на точку для корректного парсинга
+            const normalizedStr = cleanStr.replace(',', '.');
+            return parseFloat(normalizedStr) || 0;
+        }
+
+        function formatPrice(price) {
+            return price % 1 === 0 ? price.toString() : price.toFixed(2);
+        }
+
+ function parseOrder() {
+    const text = document.getElementById('orderText').value.trim();
+    hideError();
+
+    if (!text) {
+        showError('Пожалуйста, введите текст заказа');
+        return;
+    }
+
+    if (!text.includes('Состав заказа')) {
+        showError('Текст должен начинаться с "Состав заказа"');
+        return;
+    }
+
+    if (!text.match(/Итого\s+[\d.,]+\s*₽/)) {
+        showError('Текст должен заканчиваться "Итого XXX ₽"');
+        return;
+    }
+
+    try {
+        // Парсим позиции
+        const items = [];
+        const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+        let parsingItems = false;
+        
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            
+            if (line === 'Состав заказа') {
+                parsingItems = true;
+                continue;
+            }
+            
+            if (line.includes('Доставка и оплата') || line.includes('Стоимость товаров')) {
+                parsingItems = false;
+                continue;
+            }
+            
+            if (parsingItems) {
+                // Проверяем, является ли это названием блюда (не содержит "₽" и не является строкой только из цифр/пробелов)
+                if (!line.includes('₽') && !line.match(/^[\d.,\s]+$/) && 
+                    (i + 1 < lines.length && lines[i + 1].includes('шт'))) {
+                    
+                    const itemName = line;
+                    let quantity = 1;
+                    let price = 0;
+                    
+                    // Следующая строка - количество
+                    if (i + 1 < lines.length && lines[i + 1].includes('шт')) {
+                        const qtyMatch = lines[i + 1].match(/(\d+)\s*шт/);
+                        if (qtyMatch) {
+                            quantity = parseInt(qtyMatch[1]);
+                        }
+                        i++; // Пропускаем строку с количеством
+                    }
+                    
+                    // Ищем цену в следующих строках
+                    for (let j = i + 1; j < Math.min(i + 4, lines.length); j++) {
+                        if (lines[j].includes('₽')) {
+                            // Сначала ищем цену за штуку
+                            const unitPriceMatch = lines[j].match(/([\d.,]+)\s*₽\/\s*шт/);
+                            if (unitPriceMatch) {
+                                price = parsePrice(unitPriceMatch[1]);
+                                break;
+                            }
+                            
+                            // Если не нашли цену за штуку, ищем обычную цену
+                            const priceMatch = lines[j].match(/([\d.,]+)\s*₽/);
+                            if (priceMatch) {
+                                price = parsePrice(priceMatch[1]);
+                                // Если количество больше 1, предполагаем что это общая цена
+                                if (quantity > 1) {
+                                    price = price / quantity;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (price > 0) {
+                        for (let k = 0; k < quantity; k++) {
+                            items.push({
+                                name: itemName,
+                                price: price,
+                                id: items.length + k
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
+        // Парсим доставку и сборы
+        let deliveryCost = 0;
+        let serviceFee = 0;
+        let total = 0;
+
+        const deliveryMatch = text.match(/Стоимость доставки\s+([\d.,]+)\s*₽/);
+        if (deliveryMatch) {
+            deliveryCost = parsePrice(deliveryMatch[1]);
+        }
+
+        const serviceMatch = text.match(/Сервисный сбор\s+([\d.,]+)\s*₽/);
+        if (serviceMatch) {
+            serviceFee = parsePrice(serviceMatch[1]);
+        }
+
+        const totalMatch = text.match(/Итого\s+([\d.,]+)\s*₽/);
+        if (totalMatch) {
+            total = parsePrice(totalMatch[1]);
+        }
+
+        orderData = {
+            items: items,
+            deliveryCost: deliveryCost,
+            serviceFee: serviceFee,
+            total: total
+        };
+
+        if (items.length === 0) {
+            showError('Не удалось найти позиции в заказе. Проверьте формат текста.');
+            return;
+        }
+
+        console.log('Parsed items:', items); // Добавим лог для отладки
+        document.getElementById('peopleSection').classList.remove('hidden');
+        updateItemsDisplay();
+        
+    } catch (error) {
+        showError('Ошибка при обработке заказа: ' + error.message);
+        console.error(error);
+    }
+}
+
+        function handlePersonKeyPress(event) {
+            if (event.key === 'Enter') {
+                addPerson();
+            }
+        }
+
+        function addPerson() {
+            const input = document.getElementById('personName');
+            const name = input.value.trim();
+            
+            if (!name) return;
+            
+            if (people.includes(name)) {
+                showError('Участник с таким именем уже добавлен');
+                return;
+            }
+            
+            people.push(name);
+            input.value = '';
+            updatePeopleDisplay();
+            updateItemsDisplay();
+            hideError();
+        }
+
+        function removePerson(name) {
+            people = people.filter(p => p !== name);
+            updatePeopleDisplay();
+            updateItemsDisplay();
+            updateSummary();
+        }
+
+        function updatePeopleDisplay() {
+            const container = document.getElementById('peopleList');
+            container.innerHTML = people.map(person => `
+                <div class="person-tag">
+                    ${person}
+                    <button class="remove-person" onclick="removePerson('${person}')">×</button>
+                </div>
+            `).join('');
+        }
+
+        // Инициализируем участников при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePeopleDisplay();
+        });
+
+        function updateItemsDisplay() {
+            if (people.length === 0 || orderData.items.length === 0) {
+                document.getElementById('itemsSection').classList.add('hidden');
+                document.getElementById('summary').classList.add('hidden');
+                return;
+            }
+
+            const container = document.getElementById('itemsList');
+            container.innerHTML = orderData.items.map(item => `
+                <div class="item-card">
+                    <div class="item-header">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-price">${formatPrice(item.price)} ₽</div>
+                    </div>
+                    <div class="person-checkboxes">
+                        ${people.map(person => `
+                            <label class="checkbox-wrapper">
+                                <input type="checkbox" onchange="updateSummary()" data-item-id="${item.id}" data-person="${person}">
+                                ${person}
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('itemsSection').classList.remove('hidden');
+            updateSummary();
+        }
+
+        function updateSummary() {
+            if (people.length === 0) {
+                document.getElementById('summary').classList.add('hidden');
+                return;
+            }
+
+            const summary = {};
+            people.forEach(person => {
+                summary[person] = {
+                    items: [],
+                    total: 0
+                };
+            });
+
+            // Подсчитываем выбранные позиции
+            orderData.items.forEach(item => {
+                const checkboxes = document.querySelectorAll(`input[data-item-id="${item.id}"]`);
+                const selectedPeople = [];
+                
+                checkboxes.forEach(cb => {
+                    if (cb.checked) {
+                        selectedPeople.push(cb.dataset.person);
+                    }
+                });
+
+                if (selectedPeople.length > 0) {
+                    const pricePerPerson = item.price / selectedPeople.length;
+                    selectedPeople.forEach(person => {
+                        summary[person].items.push({
+                            name: item.name,
+                            price: pricePerPerson,
+                            shared: selectedPeople.length > 1
+                        });
+                        summary[person].total += pricePerPerson;
+                    });
+                }
+            });
+
+            // Добавляем доставку и сборы, разделенные поровну
+            const additionalCosts = orderData.deliveryCost + orderData.serviceFee;
+            const costPerPerson = additionalCosts / people.length;
+            
+            people.forEach(person => {
+                summary[person].total += costPerPerson;
+                if (costPerPerson > 0) {
+                    summary[person].items.push({
+                        name: 'Доставка и сервисный сбор',
+                        price: costPerPerson,
+                        shared: true
+                    });
+                }
+            });
+
+            // Отображаем итоги
+            const summaryContent = document.getElementById('summaryContent');
+            summaryContent.innerHTML = people.map(person => {
+                const personSummary = summary[person];
+                return `
+                    <div class="person-summary">
+                        <div class="person-name">${person}</div>
+                        <div class="person-items">
+                            ${personSummary.items.map(item => `
+                                ${item.name}: ${formatPrice(item.price)} ₽${item.shared ? ' (разделено)' : ''}
+                            `).join('<br>')}
+                        </div>
+                        <div class="person-total">Итого: ${formatPrice(personSummary.total)} ₽</div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('summary').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

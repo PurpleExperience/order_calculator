@@ -5,6 +5,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Калькулятор разделения заказа</title>
     <style>
+        :root {
+            /* Светлая тема (по умолчанию) */
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-bg: white;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --header-gradient: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            --summary-gradient: linear-gradient(135deg, #667eea, #764ba2);
+            --input-bg: white;
+            --input-border: #e1e8ed;
+            --input-focus: #667eea;
+            --section-bg: #f8f9fa;
+            --checkbox-bg: rgba(245, 247, 250, 0.8);
+            --checkbox-hover: #e6f0ff;
+            --checkbox-border: #e1e8ed;
+            --person-summary-bg: rgba(255,255,255,0.1);
+            --person-summary-alt-bg: rgba(255,255,255,0.15);
+            --item-card-bg: #ffffff;
+            --item-card-alt-bg: #f8f9fa;
+            --item-card-border: #e1e8ed;
+            --error-bg: #f8d7da;
+            --error-border: #f5c6cb;
+            --error-text: #dc3545;
+            --shadow: rgba(0,0,0,0.1);
+            --shadow-hover: rgba(0,0,0,0.15);
+            --copy-btn-bg: #28a745;
+            --copy-btn-hover: #218838;
+            --copy-success-bg: #d4edda;
+            --copy-success-border: #c3e6cb;
+            --copy-success-text: #155724;
+        }
+
+        /* Темная тема */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+                --card-bg: #2d3748;
+                --text-primary: #e2e8f0;
+                --text-secondary: #a0aec0;
+                --header-gradient: linear-gradient(135deg, #2F4F4F, #2F4F4F);
+                --summary-gradient: linear-gradient(135deg, #4c51bf, #553c9a);
+                --input-bg: #4a5568;
+                --input-border: #718096;
+                --input-focus: #805ad5;
+                --section-bg: #374151;
+                --checkbox-bg: rgba(74, 85, 104, 0.8);
+                --checkbox-hover: rgba(128, 90, 213, 0.2);
+                --checkbox-border: #718096;
+                --person-summary-bg: rgba(255,255,255,0.05);
+                --person-summary-alt-bg: rgba(255,255,255,0.1);
+                --item-card-bg: #374151;
+                --item-card-alt-bg: #4a5568;
+                --item-card-border: #718096;
+                --error-bg: rgba(220, 53, 69, 0.2);
+                --error-border: rgba(220, 53, 69, 0.3);
+                --error-text: #f56565;
+                --shadow: rgba(0,0,0,0.3);
+                --shadow-hover: rgba(0,0,0,0.4);
+                --copy-btn-bg: #38a169;
+                --copy-btn-hover: #2f855a;
+                --copy-success-bg: rgba(56, 161, 105, 0.2);
+                --copy-success-border: rgba(56, 161, 105, 0.3);
+                --copy-success-text: #68d391;
+            }
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,22 +79,25 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--bg-gradient);
             min-height: 100vh;
             padding: 20px;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
         }
 
         .container {
             max-width: 900px;
             margin: 0 auto;
-            background: white;
+            background: var(--card-bg);
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 40px var(--shadow);
             overflow: hidden;
+            transition: all 0.3s ease;
         }
 
         .header {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            background: var(--header-gradient);
             color: white;
             padding: 30px;
             text-align: center;
@@ -49,7 +118,7 @@
         }
 
         .input-section h2 {
-            color: #333;
+            color: var(--text-primary);
             margin-bottom: 15px;
             font-size: 1.5em;
         }
@@ -58,22 +127,28 @@
             width: 100%;
             height: 150px;
             padding: 15px;
-            border: 2px solid #e1e8ed;
+            border: 2px solid var(--input-border);
             border-radius: 12px;
             font-size: 14px;
             font-family: monospace;
             resize: vertical;
-            transition: border-color 0.3s ease;
+            transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+            background: var(--input-bg);
+            color: var(--text-primary);
         }
 
         textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--input-focus);
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
+        textarea::placeholder {
+            color: var(--text-secondary);
+        }
+
         .parse-btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: var(--summary-gradient);
             color: white;
             border: none;
             padding: 12px 30px;
@@ -92,8 +167,9 @@
         .people-section {
             margin: 30px 0;
             padding: 20px;
-            background: #f8f9fa;
+            background: var(--section-bg);
             border-radius: 12px;
+            transition: background-color 0.3s ease;
         }
 
         .people-input {
@@ -107,9 +183,16 @@
             flex: 1;
             min-width: 200px;
             padding: 10px 15px;
-            border: 2px solid #e1e8ed;
+            border: 2px solid var(--input-border);
             border-radius: 8px;
             font-size: 14px;
+            background: var(--input-bg);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .people-input input::placeholder {
+            color: var(--text-secondary);
         }
 
         .add-person-btn {
@@ -133,7 +216,7 @@
         }
 
         .person-tag {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            background: var(--header-gradient);
             color: white;
             padding: 8px 15px;
             border-radius: 20px;
@@ -159,40 +242,83 @@
         }
 
         .item-card {
-            background: white;
-            border: 2px solid #e1e8ed;
+            border: 2px solid var(--item-card-border);
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 15px;
-            transition: border-color 0.3s ease, transform 0.2s ease;
+            transition: border-color 0.3s ease, transform 0.2s ease, background-color 0.3s ease;
         }
 
         .item-card:hover {
-            border-color: #667eea;
+            border-color: var(--input-focus);
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 20px var(--shadow-hover);
+        }
+
+        /* Чередующиеся цвета для элементов списка */
+        .item-card:nth-child(odd) {
+            background: var(--item-card-bg);
+        }
+
+        .item-card:nth-child(even) {
+            background: var(--item-card-alt-bg);
         }
 
         .item-header {
             display: flex;
-            justify-content: between;
-            align-items: center;
+            justify-content: space-between;
+            align-items: flex-start;
             margin-bottom: 15px;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 15px;
+        }
+
+        .item-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .item-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            flex-shrink: 0;
+            box-shadow: 0 4px 8px var(--shadow);
+        }
+
+        .item-details {
+            flex: 1;
         }
 
         .item-name {
             font-weight: bold;
-            color: #333;
+            color: var(--text-primary);
             font-size: 1.1em;
-            flex: 1;
+            margin-bottom: 4px;
+            line-height: 1.3;
         }
 
         .item-price {
             color: #28a745;
             font-weight: bold;
             font-size: 1.2em;
+            align-self: flex-start;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .item-price {
+                color: #68d391;
+            }
         }
 
         .person-checkboxes {
@@ -201,83 +327,156 @@
             gap: 15px;
         }
 
-		.checkbox-wrapper {
-			display: flex;
-			align-items: center;
-			gap: 10px;
-			cursor: pointer;
-			padding: 8px 12px;
-			border-radius: 8px;
-			transition: all 0.3s ease;
-			background: #f5f7fa;
-			border: 1px solid #e1e8ed;
-		}
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: var(--checkbox-bg);
+            border: 1px solid var(--checkbox-border);
+        }
 
-		.checkbox-wrapper:hover {
-			background: #e6f0ff;
-			border-color: #b3c6ff;
-			transform: translateY(-2px);
-			box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-		}
+        .checkbox-wrapper:hover {
+            background: var(--checkbox-hover);
+            border-color: var(--input-focus);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px var(--shadow);
+        }
 
-		.checkbox-wrapper input[type="checkbox"] {
-			-webkit-appearance: none;
-			appearance: none;
-			width: 20px;
-			height: 20px;
-			border: 2px solid #667eea;
-			border-radius: 4px;
-			outline: none;
-			cursor: pointer;
-			position: relative;
-			transition: all 0.2s ease;
-		}
+        .checkbox-wrapper input[type="checkbox"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--input-focus);
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
 
-		.checkbox-wrapper input[type="checkbox"]:checked {
-			background-color: #667eea;
-			border-color: #667eea;
-		}
+        .checkbox-wrapper input[type="checkbox"]:checked {
+            background-color: var(--input-focus);
+            border-color: var(--input-focus);
+        }
 
-		.checkbox-wrapper input[type="checkbox"]:checked::after {
-			content: "✓";
-			position: absolute;
-			color: white;
-			font-size: 14px;
-			left: 50%;
-			top: 50%;
-			transform: translate(-50%, -50%);
-		}
+        .checkbox-wrapper input[type="checkbox"]:checked::after {
+            content: "✓";
+            position: absolute;
+            color: white;
+            font-size: 14px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
 
-		.checkbox-wrapper input[type="checkbox"]:focus {
-			box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
-		}
-		
-		.checkbox-wrapper.checked {
-			background: #e6f0ff;
-			border-color: #667eea;
-			font-weight: 500;
-		}
+        .checkbox-wrapper input[type="checkbox"]:focus {
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+        }
+        
+        .checkbox-wrapper.checked {
+            background: var(--checkbox-hover);
+            border-color: var(--input-focus);
+            font-weight: 500;
+        }
 
         .summary {
             margin-top: 40px;
             padding: 25px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: var(--summary-gradient);
             border-radius: 15px;
             color: white;
+            position: relative;
+        }
+
+        .summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .summary h2 {
-            margin-bottom: 20px;
-            text-align: center;
             font-size: 1.8em;
         }
 
+        .copy-btn {
+            background: var(--copy-btn-bg);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: var(--copy-btn-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+
+        .copy-btn.copied {
+            background: var(--copy-btn-bg);
+            animation: copySuccess 0.6s ease;
+        }
+
+        @keyframes copySuccess {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .copy-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--copy-success-bg);
+            color: var(--copy-success-text);
+            border: 1px solid var(--copy-success-border);
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px var(--shadow);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        }
+
+        .copy-notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
         .person-summary {
-            background: rgba(255,255,255,0.1);
+            background: var(--person-summary-bg);
             padding: 15px;
             margin-bottom: 15px;
             border-radius: 10px;
             backdrop-filter: blur(10px);
+        }
+
+        /* Чередующиеся цвета для итоговых блоков */
+        .person-summary:nth-child(odd) {
+            background: var(--person-summary-bg);
+        }
+
+        .person-summary:nth-child(even) {
+            background: var(--person-summary-alt-bg);
         }
 
         .person-name {
@@ -299,16 +498,44 @@
         }
 
         .error {
-            color: #dc3545;
-            background: #f8d7da;
+            color: var(--error-text);
+            background: var(--error-bg);
             padding: 15px;
             border-radius: 8px;
             margin: 15px 0;
-            border: 1px solid #f5c6cb;
+            border: 1px solid var(--error-border);
+            transition: all 0.3s ease;
         }
 
         .hidden {
             display: none;
+        }
+		
+		.copy-icon {
+			width: 20px;
+			height: 20px;
+			cursor: pointer;
+			margin-left: 10px;
+			transition: all 0.2s ease;
+			fill: currentColor;
+		}
+
+		.copy-icon:hover {
+			transform: scale(1.1);
+			opacity: 0.8;
+		}
+		
+
+        /* Добавим индикатор темы в заголовок */
+        .theme-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-size: 0.9em;
+            backdrop-filter: blur(10px);
         }
 
         @media (max-width: 768px) {
@@ -327,12 +554,54 @@
             .people-input input {
                 min-width: auto;
             }
+
+            .item-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .item-info {
+                min-width: auto;
+            }
+
+            .item-price {
+                align-self: flex-end;
+                margin-top: 10px;
+            }
+
+            .theme-indicator {
+                position: static;
+                margin-top: 15px;
+                display: inline-block;
+            }
+
+            .summary-header {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+
+            .copy-notification {
+                right: 10px;
+                left: 10px;
+                transform: translateY(-100%);
+            }
+
+            .copy-notification.show {
+                transform: translateY(0);
+            }
+        }
+
+        /* Плавная анимация при смене темы */
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
+            <div class="theme-indicator" id="themeIndicator">🌙 Авто-тема</div>
             <h1>🍕 Калькулятор разделения заказа</h1>
             <p>Легко разделите счет между друзьями</p>
         </div>
@@ -360,10 +629,21 @@
             </div>
 
             <div id="summary" class="summary hidden">
-                <h2>💰 Итоговый расчет</h2>
+					<div class="summary-header">
+						<div style="display: flex; align-items: center; gap: 10px;">
+							<h2>💰 Итоговый расчет</h2>
+							<svg class="copy-icon" onclick="copySummaryToClipboard()" viewBox="0 0 24 24">
+								<path d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"/>
+							</svg>
+						</div>
+					</div>
                 <div id="summaryContent"></div>
             </div>
         </div>
+    </div>
+
+    <div id="copyNotification" class="copy-notification">
+        ✅ Расчет скопирован
     </div>
 
     <script>
@@ -374,6 +654,43 @@
             total: 0
         };
         let people = ['Егор', 'Дима', 'Саня'];
+
+        // Определение и отображение текущей темы
+        function updateThemeIndicator() {
+            const indicator = document.getElementById('themeIndicator');
+            const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (isDarkMode) {
+                indicator.textContent = '🌙 Темная тема';
+            } else {
+                indicator.textContent = '☀️ Светлая тема';
+            }
+        }
+
+        // Слушаем изменения темы системы
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateThemeIndicator);
+
+        // Генерация цвета на основе названия товара
+		function generateColorFromName(name) {
+			let hash = 0;
+			for (let i = 0; i < name.length; i++) {
+				hash = name.charCodeAt(i) + ((hash << 5) - hash);
+			}
+			
+			// Землистые тона (ограничиваем диапазон hue)
+			const hue = 20 + (Math.abs(hash) % 60); // 20-80° (теплые тона)
+			const saturation = 30 + (Math.abs(hash) % 30); // 30-60%
+			const lightness = 50 + (Math.abs(hash) % 30); // 50-80%
+			
+			return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+		}
+
+
+        // Генерация первой буквы названия товара
+        function getFirstLetter(name) {
+            if (!name || name.length === 0) return 'А';
+            return name.charAt(0).toUpperCase();
+        }
 
         function showError(message) {
             const errorDiv = document.getElementById('error');
@@ -397,139 +714,332 @@
             return price % 1 === 0 ? price.toString() : price.toFixed(2);
         }
 
- function parseOrder() {
-    const text = document.getElementById('orderText').value.trim();
-    hideError();
-
-    if (!text) {
-        showError('Пожалуйста, введите текст заказа');
-        return;
-    }
-
-    if (!text.includes('Состав заказа')) {
-        showError('Текст должен начинаться с "Состав заказа"');
-        return;
-    }
-
-    if (!text.match(/Итого\s+[\d.,]+\s*₽/)) {
-        showError('Текст должен заканчиваться "Итого XXX ₽"');
-        return;
-    }
-
-    try {
-        // Парсим позиции
-        const items = [];
-        const lines = text.split('\n').map(line => line.trim()).filter(line => line);
-        let parsingItems = false;
-        
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i];
+        function copySummaryToClipboard() {
+            const summaryData = generateSummaryText();
             
-            if (line === 'Состав заказа') {
-                parsingItems = true;
-                continue;
+            if (navigator.clipboard && window.isSecureContext) {
+                // Используем Clipboard API для современных браузеров
+                navigator.clipboard.writeText(summaryData).then(() => {
+                    showCopyNotification();
+                }).catch(err => {
+                    console.error('Ошибка при копировании: ', err);
+                    fallbackCopyTextToClipboard(summaryData);
+                });
+            } else {
+                // Fallback для старых браузеров
+                fallbackCopyTextToClipboard(summaryData);
+            }
+        }
+
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showCopyNotification();
+                } else {
+                    console.error('Не удалось скопировать текст');
+                }
+            } catch (err) {
+                console.error('Ошибка при копировании: ', err);
             }
             
-            if (line.includes('Доставка и оплата') || line.includes('Стоимость товаров')) {
-                parsingItems = false;
-                continue;
-            }
+            document.body.removeChild(textArea);
+        }
+
+
+		function showCopyNotification(text = '✅ Расчет скопирован') {
+			const notification = document.getElementById('copyNotification');
+			notification.textContent = text;
+			notification.classList.add('show');
+			
+			setTimeout(() => {
+				notification.classList.remove('show');
+			}, 1000);
+		}
+
+
+		function copyPersonSummary(personName) {
+			const summary = generatePersonSummaryText(personName);
+			
+			if (navigator.clipboard) {
+				navigator.clipboard.writeText(summary).then(() => {
+					showCopyNotification();
+				});
+			} else {
+				fallbackCopyTextToClipboard(summary);
+			}
+		}
+
+		function generatePersonSummaryText(personName) {
+			// Аналогично generateSummaryText, но только для одного человека
+			const summary = {};
+			summary[personName] = {
+				items: [],
+				total: 0
+			};
+
+			// Собираем данные для этого человека
+			const checkboxes = document.querySelectorAll(`input[data-person="${personName}"]:checked`);
+			
+			checkboxes.forEach(checkbox => {
+				const itemIndex = checkbox.dataset.itemIndex;
+				const item = orderData.items[itemIndex];
+				
+				if (item) {
+					summary[personName].items.push({
+						name: item.name,
+						price: item.price,
+						isShared: false
+					});
+					summary[personName].total += item.price;
+				}
+			});
+
+			// Добавляем долю в доставке
+			const additionalCosts = orderData.deliveryCost + orderData.serviceFee;
+			const costPerPerson = additionalCosts / people.length;
+			
+			if (summary[personName].items.length > 0) {
+				summary[personName].total += costPerPerson;
+				summary[personName].items.push({
+					name: 'Доставка и сервисный сбор',
+					price: costPerPerson,
+					isShared: true
+				});
+			}
+
+			// Генерируем текст
+			let summaryText = `🍕 РАСЧЕТ ДЛЯ ${personName.toUpperCase()}\n`;
+			summaryText += '='.repeat(30) + '\n\n';
+			
+			summary[personName].items.forEach(item => {
+				const priceStr = formatPrice(item.price) + ' ₽';
+				const suffix = item.isShared ? ' (разделено)' : '';
+				summaryText += `• ${item.name}: ${priceStr}${suffix}\n`;
+			});
+			
+			summaryText += `\n💰 К доплате: ${formatPrice(summary[personName].total)} ₽`;
+
+			return summaryText;
+		}
+
+        function generateSummaryText() {
+            const summary = {};
+            people.forEach(person => {
+                summary[person] = {
+                    items: [],
+                    total: 0
+                };
+            });
+
+            // Собираем все выбранные чекбоксы
+            const allCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
             
-            if (parsingItems) {
-                // Проверяем, является ли это названием блюда (не содержит "₽" и не является строкой только из цифр/пробелов)
-                if (!line.includes('₽') && !line.match(/^[\d.,\s]+$/) && 
-                    (i + 1 < lines.length && lines[i + 1].includes('шт'))) {
+            // Для каждого выбранного чекбокса добавляем соответствующий товар
+            allCheckboxes.forEach(checkbox => {
+                const person = checkbox.dataset.person;
+                const itemIndex = checkbox.dataset.itemIndex;
+                const item = orderData.items[itemIndex];
+                
+                if (item) {
+                    summary[person].items.push({
+                        name: item.name,
+                        price: item.price,
+                        isShared: false
+                    });
+                    summary[person].total += item.price;
+                }
+            });
+
+            // Добавляем доставку и сборы, разделенные поровну
+            const additionalCosts = orderData.deliveryCost + orderData.serviceFee;
+            const costPerPerson = additionalCosts / people.length;
+            
+            people.forEach(person => {
+                if (summary[person].items.length > 0) {
+                    summary[person].total += costPerPerson;
+                    summary[person].items.push({
+                        name: 'Доставка и сервисный сбор',
+                        price: costPerPerson,
+                        isShared: true
+                    });
+                }
+            });
+
+            // Генерируем текст для копирования
+            let summaryText = '🍕 ИТОГОВЫЙ РАСЧЕТ ЗАКАЗА\n';
+            summaryText += '=' + '='.repeat(30) + '\n\n';
+
+            let totalSum = 0;
+            people.forEach(person => {
+                const personSummary = summary[person];
+                if (personSummary.items.length === 0) return;
+                
+                summaryText += `👤 ${person.toUpperCase()}\n`;
+                summaryText += '-'.repeat(20) + '\n';
+                
+                personSummary.items.forEach(item => {
+                    const priceStr = formatPrice(item.price) + ' ₽';
+                    const suffix = item.isShared ? ' (разделено)' : '';
+                    summaryText += `• ${item.name}: ${priceStr}${suffix}\n`;
+                });
+                
+                summaryText += `\n💰 К доплате: ${formatPrice(personSummary.total)} ₽\n\n`;
+                totalSum += personSummary.total;
+            });
+
+            summaryText += '=' + '='.repeat(30) + '\n';
+            summaryText += `🧾 ОБЩАЯ СУММА: ${formatPrice(totalSum)} ₽\n`;
+            summaryText += `📦 Доставка и сборы: ${formatPrice(additionalCosts)} ₽\n`;
+            summaryText += `🍔 Стоимость еды: ${formatPrice(totalSum - additionalCosts)} ₽`;
+
+            return summaryText;
+        }
+
+        function parseOrder() {
+            const text = document.getElementById('orderText').value.trim();
+            hideError();
+
+            if (!text) {
+                showError('Пожалуйста, введите текст заказа');
+                return;
+            }
+
+            if (!text.includes('Состав заказа')) {
+                showError('Текст должен начинаться с "Состав заказа"');
+                return;
+            }
+
+            if (!text.match(/Итого\s+[\d.,]+\s*₽/)) {
+                showError('Текст должен заканчиваться "Итого XXX ₽"');
+                return;
+            }
+
+            try {
+                // Парсим позиции
+                const items = [];
+                const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+                let parsingItems = false;
+                
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
                     
-                    const itemName = line;
-                    let quantity = 1;
-                    let price = 0;
-                    
-                    // Следующая строка - количество
-                    if (i + 1 < lines.length && lines[i + 1].includes('шт')) {
-                        const qtyMatch = lines[i + 1].match(/(\d+)\s*шт/);
-                        if (qtyMatch) {
-                            quantity = parseInt(qtyMatch[1]);
-                        }
-                        i++; // Пропускаем строку с количеством
+                    if (line === 'Состав заказа') {
+                        parsingItems = true;
+                        continue;
                     }
                     
-                    // Ищем цену в следующих строках
-                    for (let j = i + 1; j < Math.min(i + 4, lines.length); j++) {
-                        if (lines[j].includes('₽')) {
-                            // Сначала ищем цену за штуку
-                            const unitPriceMatch = lines[j].match(/([\d.,]+)\s*₽\/\s*шт/);
-                            if (unitPriceMatch) {
-                                price = parsePrice(unitPriceMatch[1]);
-                                break;
+                    if (line.includes('Доставка и оплата') || line.includes('Стоимость товаров')) {
+                        parsingItems = false;
+                        continue;
+                    }
+                    
+                    if (parsingItems) {
+                        // Проверяем, является ли это названием блюда (не содержит "₽" и не является строкой только из цифр/пробелов)
+                        if (!line.includes('₽') && !line.match(/^[\d.,\s]+$/) && 
+                            (i + 1 < lines.length && lines[i + 1].includes('шт'))) {
+                            
+                            const itemName = line;
+                            let quantity = 1;
+                            let price = 0;
+                            
+                            // Следующая строка - количество
+                            if (i + 1 < lines.length && lines[i + 1].includes('шт')) {
+                                const qtyMatch = lines[i + 1].match(/(\d+)\s*шт/);
+                                if (qtyMatch) {
+                                    quantity = parseInt(qtyMatch[1]);
+                                }
+                                i++; // Пропускаем строку с количеством
                             }
                             
-                            // Если не нашли цену за штуку, ищем обычную цену
-                            const priceMatch = lines[j].match(/([\d.,]+)\s*₽/);
-                            if (priceMatch) {
-                                price = parsePrice(priceMatch[1]);
-                                // Если количество больше 1, предполагаем что это общая цена
-                                if (quantity > 1) {
-                                    price = price / quantity;
+                            // Ищем цену в следующих строках
+                            for (let j = i + 1; j < Math.min(i + 4, lines.length); j++) {
+                                if (lines[j].includes('₽')) {
+                                    // Сначала ищем цену за штуку
+                                    const unitPriceMatch = lines[j].match(/([\d.,]+)\s*₽\/\s*шт/);
+                                    if (unitPriceMatch) {
+                                        price = parsePrice(unitPriceMatch[1]);
+                                        break;
+                                    }
+                                    
+                                    // Если не нашли цену за штуку, ищем обычную цену
+                                    const priceMatch = lines[j].match(/([\d.,]+)\s*₽/);
+                                    if (priceMatch) {
+                                        price = parsePrice(priceMatch[1]);
+                                        // Если количество больше 1, предполагаем что это общая цена
+                                        if (quantity > 1) {
+                                            price = price / quantity;
+                                        }
+                                        break;
+                                    }
                                 }
-                                break;
                             }
-                        }
-                    }
-                    
-                    if (price > 0) {
-                        for (let k = 0; k < quantity; k++) {
-                            items.push({
-                                name: itemName,
-                                price: price,
-                                id: items.length + k
-                            });
+                            
+                            if (price > 0) {
+                                for (let k = 0; k < quantity; k++) {
+                                    items.push({
+                                        name: itemName,
+                                        price: price,
+                                        id: items.length + k,
+                                        letter: getFirstLetter(itemName),
+                                        color: generateColorFromName(itemName)
+                                    });
+                                }
+                            }
                         }
                     }
                 }
+
+                // Парсим доставку и сборы
+                let deliveryCost = 0;
+                let serviceFee = 0;
+                let total = 0;
+
+                const deliveryMatch = text.match(/Стоимость доставки\s+([\d.,]+)\s*₽/);
+                if (deliveryMatch) {
+                    deliveryCost = parsePrice(deliveryMatch[1]);
+                }
+
+                const serviceMatch = text.match(/Сервисный сбор\s+([\d.,]+)\s*₽/);
+                if (serviceMatch) {
+                    serviceFee = parsePrice(serviceMatch[1]);
+                }
+
+                const totalMatch = text.match(/Итого\s+([\d.,]+)\s*₽/);
+                if (totalMatch) {
+                    total = parsePrice(totalMatch[1]);
+                }
+
+                orderData = {
+                    items: items,
+                    deliveryCost: deliveryCost,
+                    serviceFee: serviceFee,
+                    total: total
+                };
+
+                if (items.length === 0) {
+                    showError('Не удалось найти позиции в заказе. Проверьте формат текста.');
+                    return;
+                }
+
+                console.log('Parsed items:', items); // Добавим лог для отладки
+                document.getElementById('peopleSection').classList.remove('hidden');
+                updateItemsDisplay();
+                
+            } catch (error) {
+                showError('Ошибка при обработке заказа: ' + error.message);
+                console.error(error);
             }
         }
-
-        // Парсим доставку и сборы
-        let deliveryCost = 0;
-        let serviceFee = 0;
-        let total = 0;
-
-        const deliveryMatch = text.match(/Стоимость доставки\s+([\d.,]+)\s*₽/);
-        if (deliveryMatch) {
-            deliveryCost = parsePrice(deliveryMatch[1]);
-        }
-
-        const serviceMatch = text.match(/Сервисный сбор\s+([\d.,]+)\s*₽/);
-        if (serviceMatch) {
-            serviceFee = parsePrice(serviceMatch[1]);
-        }
-
-        const totalMatch = text.match(/Итого\s+([\d.,]+)\s*₽/);
-        if (totalMatch) {
-            total = parsePrice(totalMatch[1]);
-        }
-
-        orderData = {
-            items: items,
-            deliveryCost: deliveryCost,
-            serviceFee: serviceFee,
-            total: total
-        };
-
-        if (items.length === 0) {
-            showError('Не удалось найти позиции в заказе. Проверьте формат текста.');
-            return;
-        }
-
-        console.log('Parsed items:', items); // Добавим лог для отладки
-        document.getElementById('peopleSection').classList.remove('hidden');
-        updateItemsDisplay();
-        
-    } catch (error) {
-        showError('Ошибка при обработке заказа: ' + error.message);
-        console.error(error);
-    }
-}
 
         function handlePersonKeyPress(event) {
             if (event.key === 'Enter') {
@@ -572,125 +1082,136 @@
             `).join('');
         }
 
-        // Инициализируем участников при загрузке
+        // Инициализируем участников и тему при загрузке
         document.addEventListener('DOMContentLoaded', function() {
             updatePeopleDisplay();
+            updateThemeIndicator();
         });
 
-		function updateItemsDisplay() {
-			if (people.length === 0 || orderData.items.length === 0) {
-				document.getElementById('itemsSection').classList.add('hidden');
-				document.getElementById('summary').classList.add('hidden');
-				return;
-			}
+        function updateItemsDisplay() {
+            if (people.length === 0 || orderData.items.length === 0) {
+                document.getElementById('itemsSection').classList.add('hidden');
+                document.getElementById('summary').classList.add('hidden');
+                return;
+            }
 
-			const container = document.getElementById('itemsList');
-			container.innerHTML = orderData.items.map((item, index) => {
-				// Проверяем, есть ли уже выбранные чекбоксы для этого товара
-				const checkboxes = document.querySelectorAll(`input[data-item-index="${index}"]`);
-				let selectedPeople = [];
-				checkboxes.forEach(cb => {
-					if (cb.checked) selectedPeople.push(cb.dataset.person);
-				});
+            const container = document.getElementById('itemsList');
+            container.innerHTML = orderData.items.map((item, index) => {
+                // Проверяем, есть ли уже выбранные чекбоксы для этого товара
+                const checkboxes = document.querySelectorAll(`input[data-item-index="${index}"]`);
+                let selectedPeople = [];
+                checkboxes.forEach(cb => {
+                    if (cb.checked) selectedPeople.push(cb.dataset.person);
+                });
 
-				return `
-					<div class="item-card">
-						<div class="item-header">
-							<div class="item-name">${item.name}</div>
-							<div class="item-price">${formatPrice(item.price)} ₽</div>
-						</div>
-						<div class="person-checkboxes">
-							${people.map(person => {
-								const isChecked = selectedPeople.includes(person);
-								return `
-									<label class="checkbox-wrapper ${isChecked ? 'checked' : ''}">
-										<input type="checkbox" onchange="updateSummary()" 
-											   data-item-index="${index}" 
-											   data-person="${person}"
-											   ${isChecked ? 'checked' : ''}>
-										${person}
-									</label>
-								`;
-							}).join('')}
-						</div>
+                return `
+                    <div class="item-card">
+                        <div class="item-header">
+                            <div class="item-info">
+                                <div class="item-image" style="background: ${item.color};">
+                                    ${item.letter}
+                                </div>
+                                <div class="item-details">
+                                    <div class="item-name">${item.name}</div>
+                                </div>
+                            </div>
+                            <div class="item-price">${formatPrice(item.price)} ₽</div>
+                        </div>
+                        <div class="person-checkboxes">
+                            ${people.map(person => {
+                                const isChecked = selectedPeople.includes(person);
+                                return `
+                                    <label class="checkbox-wrapper ${isChecked ? 'checked' : ''}">
+                                        <input type="checkbox" onchange="updateSummary()" 
+                                               data-item-index="${index}" 
+                                               data-person="${person}"
+                                               ${isChecked ? 'checked' : ''}>
+                                        ${person}
+                                    </label>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('itemsSection').classList.remove('hidden');
+            updateSummary();
+        }
+
+        function updateSummary() {
+            if (people.length === 0) {
+                document.getElementById('summary').classList.add('hidden');
+                return;
+            }
+
+            const summary = {};
+            people.forEach(person => {
+                summary[person] = {
+                    items: [],
+                    total: 0
+                };
+            });
+
+            // Собираем все выбранные чекбоксы
+            const allCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            
+            // Для каждого выбранного чекбокса добавляем соответствующий товар
+            allCheckboxes.forEach(checkbox => {
+                const person = checkbox.dataset.person;
+                const itemIndex = checkbox.dataset.itemIndex;
+                const item = orderData.items[itemIndex];
+                
+                if (item) {
+                    // Добавляем товар с полной ценой
+                    summary[person].items.push({
+                        name: item.name,
+                        price: item.price,
+                        isShared: false
+                    });
+                    summary[person].total += item.price;
+                }
+            });
+
+            // Добавляем доставку и сборы, разделенные поровну
+            const additionalCosts = orderData.deliveryCost + orderData.serviceFee;
+            const costPerPerson = additionalCosts / people.length;
+            
+            people.forEach(person => {
+                if (summary[person].items.length > 0) { // Только если у человека есть заказы
+                    summary[person].total += costPerPerson;
+                    summary[person].items.push({
+                        name: 'Доставка и сервисный сбор',
+                        price: costPerPerson,
+                        isShared: true
+                    });
+                }
+            });
+
+            // Отображаем итоги
+            const summaryContent = document.getElementById('summaryContent');
+            summaryContent.innerHTML = people.map(person => {
+                const personSummary = summary[person];
+                if (personSummary.items.length === 0) return ''; // Пропускаем людей без заказов
+                
+                return `
+                    <div class="person-summary">
+					<div class="person-name">
+						${person}
+						<svg class="copy-icon" onclick="copyPersonSummary('${person}')" viewBox="0 0 24 24">
+							<path d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"/>
+						</svg>
 					</div>
-				`;
-			}).join('');
+                        <div class="person-items">
+                            ${personSummary.items.map(item => `
+                                ${item.name}: ${formatPrice(item.price)} ₽${item.isShared ? ' (разделено)' : ''}
+                            `).join('<br>')}
+                        </div>
+                        <div class="person-total">Итого: ${formatPrice(personSummary.total)} ₽</div>
+                    </div>
+                `;
+            }).join('');
 
-			document.getElementById('itemsSection').classList.remove('hidden');
-			updateSummary();
-		}
-
-		function updateSummary() {
-			if (people.length === 0) {
-				document.getElementById('summary').classList.add('hidden');
-				return;
-			}
-
-			const summary = {};
-			people.forEach(person => {
-				summary[person] = {
-					items: [],
-					total: 0
-				};
-			});
-
-			// Собираем все выбранные чекбоксы
-			const allCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
-			
-			// Для каждого выбранного чекбокса добавляем соответствующий товар
-			allCheckboxes.forEach(checkbox => {
-				const person = checkbox.dataset.person;
-				const itemIndex = checkbox.dataset.itemIndex;
-				const item = orderData.items[itemIndex];
-				
-				if (item) {
-					// Добавляем товар с полной ценой
-					summary[person].items.push({
-						name: item.name,
-						price: item.price,
-						isShared: false
-					});
-					summary[person].total += item.price;
-				}
-			});
-
-			// Добавляем доставку и сборы, разделенные поровну
-			const additionalCosts = orderData.deliveryCost + orderData.serviceFee;
-			const costPerPerson = additionalCosts / people.length;
-			
-			people.forEach(person => {
-				if (summary[person].items.length > 0) { // Только если у человека есть заказы
-					summary[person].total += costPerPerson;
-					summary[person].items.push({
-						name: 'Доставка и сервисный сбор',
-						price: costPerPerson,
-						isShared: true
-					});
-				}
-			});
-
-			// Отображаем итоги
-			const summaryContent = document.getElementById('summaryContent');
-			summaryContent.innerHTML = people.map(person => {
-				const personSummary = summary[person];
-				if (personSummary.items.length === 0) return ''; // Пропускаем людей без заказов
-				
-				return `
-					<div class="person-summary">
-						<div class="person-name">${person}</div>
-						<div class="person-items">
-							${personSummary.items.map(item => `
-								${item.name}: ${formatPrice(item.price)} ₽${item.isShared ? ' (разделено)' : ''}
-							`).join('<br>')}
-						</div>
-						<div class="person-total">Итого: ${formatPrice(personSummary.total)} ₽</div>
-					</div>
-				`;
-			}).join('');
-
-			document.getElementById('summary').classList.remove('hidden');
-		}
+            document.getElementById('summary').classList.remove('hidden');
+        }
     </script>
-</body>
-</html>

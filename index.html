@@ -441,27 +441,29 @@
             100% { transform: scale(1); }
         }
 
-        .copy-notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--copy-success-bg);
-            color: var(--copy-success-text);
-            border: 1px solid var(--copy-success-border);
-            padding: 12px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px var(--shadow);
-            z-index: 1000;
-            opacity: 0;
-            transform: translateX(100%);
-            transition: all 0.3s ease;
-        }
+		.copy-notification {
+			position: fixed;
+			top: 20px;
+			left: 50%;
+			transform: translateX(-50%) translateY(-100%);
+			background: var(--copy-success-bg);
+			color: var(--copy-success-text);
+			border: 1px solid var(--copy-success-border);
+			padding: 12px 20px;
+			border-radius: 8px;
+			box-shadow: 0 4px 12px var(--shadow);
+			z-index: 1000;
+			opacity: 0;
+			transition: all 0.3s ease;
+			text-align: center;
+			white-space: nowrap;
+		}
 
-        .copy-notification.show {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
+		.copy-notification.show {
+			opacity: 1;
+			transform: translateX(-50%) translateY(0);
+		}
+		
         .person-summary {
             background: var(--person-summary-bg);
             padding: 15px;
@@ -580,16 +582,18 @@
                 align-items: stretch;
                 text-align: center;
             }
+			
+			.copy-notification {
+				width: 90%;
+				max-width: 300px;
+				white-space: normal;
+				transform: translateX(-50%) translateY(-100%);
+			}
+			
+			.copy-notification.show {
+				transform: translateX(-50%) translateY(0);
+			}			
 
-            .copy-notification {
-                right: 10px;
-                left: 10px;
-                transform: translateY(-100%);
-            }
-
-            .copy-notification.show {
-                transform: translateY(0);
-            }
         }
 
         /* Плавная анимация при смене темы */
